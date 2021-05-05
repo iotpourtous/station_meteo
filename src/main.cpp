@@ -5,33 +5,21 @@
 
 void setup()
 {
+
+  //Initialisation du Serial
   Serial.begin(SERIAL_BAUD);
-  delay(1000);
+  
   //Initialisation du bluetooth
-  SerialBT.begin("STATION_METEO");
+  SerialBT.begin(BT_ACCESS_POINT);
 
   //Initialisation du DHT22
-  dht->begin();
+  dht.begin();
 
   //Initialisation du BPM280
-  if (!bmp->begin())
-  {
-    Serial.println("Le capteur BMP280 est introuvable. Vérifier votre câblage");
-    while (1)
-      yield();
-  }
+  bmp.begin();
 
   //Initialisation du DS3231
-  if (!rtc.begin())
-  {
-    Serial.println("Le RTC est introuvable. Vérifier votre câblage");
-  }
-
-  if (rtc.lostPower())
-  {
-    Serial.println("RTC lost power, let's set the time!");
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-  }
+  rtc.begin();
 
   //Initialisation du SPIFFS
   if (!SPIFFS.begin())
@@ -47,13 +35,12 @@ void setup()
   Serial.println("Initialisation done.");
 
   currentDate = rtc.now();
-  currentTemperature = dht->temperature();
-  currentHumidity = dht->humidity();
-  currentPressure = bmp->pressure();
+  currentTemperature = dht.temperature();
+  currentHumidity = dht.humidity();
+  currentPressure = bmp.pressure();
 
   tempsDate = millis();
   tempsSensor = millis();
-
 
   myTFT.afficheEcranAccueil(
       currentDate,
@@ -78,18 +65,18 @@ void loop()
       if (counter == 0)
       {
         myTFT.afficheEcranAccueil(rtc.now(),
-                            dht->temperature(),
-                            dht->humidity(),
-                            bmp->pressure());
+                                  dht.temperature(),
+                                  dht.humidity(),
+                                  bmp.pressure());
       }
       else if (counter == 1)
-        myTFT.afficheTemperature((String)(dht->temperature()), true);
+        myTFT.afficheTemperature((String)(dht.temperature()), true);
       else if (counter == 2)
-        myTFT.afficheHumidite((String)(dht->humidity()), true);
+        myTFT.afficheHumidite((String)(dht.humidity()), true);
       else if (counter == 3)
-        myTFT.affichePression((String)(bmp->pressure()), true);
+        myTFT.affichePression((String)(bmp.pressure()), true);
       else if (counter == 4)
-        myTFT.afficheHeure(rtc.now(),String(rtc.dayOfTheWeek()), true);
+        myTFT.afficheHeure(rtc.now(), String(rtc.dayOfTheWeek()), true);
     }
     currentTouch = HIGH;
   }
@@ -108,7 +95,7 @@ void loop()
 
       if (counter == 4)
       {
-        myTFT.afficheHeure(currentDate, String(rtc.dayOfTheWeek()),true);
+        myTFT.afficheHeure(currentDate, String(rtc.dayOfTheWeek()), true);
       }
       else
         myTFT.afficheHeure(currentDate, String(rtc.dayOfTheWeek()));
@@ -120,7 +107,7 @@ void loop()
   if ((millis() - tempsSensor) > delaySensor)
   {
 
-    float temperature = dht->temperature();
+    float temperature = dht.temperature();
     if (temperature != currentTemperature)
     {
       currentTemperature = temperature;
@@ -132,7 +119,7 @@ void loop()
         myTFT.afficheTemperature((String)(currentTemperature), true);
     }
 
-    float humidity = dht->humidity();
+    float humidity = dht.humidity();
     if (humidity != currentHumidity)
     {
       currentHumidity = humidity;
@@ -142,7 +129,7 @@ void loop()
         myTFT.afficheHumidite((String)(currentHumidity), true);
     }
 
-    int pressure = bmp->pressure();
+    int pressure = bmp.pressure();
     if (pressure != currentPressure)
     {
       currentPressure = pressure;

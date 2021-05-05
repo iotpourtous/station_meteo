@@ -11,19 +11,13 @@
 BluetoothSerial SerialBT;
 
 //DHT22
-temperature_type_t temperatureType = TCELCIUS;
-float temperatureOffset = 0;
-float humidityOffset = 0;
-
-MyDHT *dht = new MyDHT(DHTPIN, DHTTYPE, temperatureType, temperatureOffset, humidityOffset);
+MyDHT dht(DHTPIN, DHTTYPE, DHT22_SENSOR_ID);
 
 //BMP280
-int pressureOffset = 0;
-
-MyBMP280 *bmp = new MyBMP280(BMP280_ADDR);
+MyBMP280 bmp(BMP280_ADDR, BMP280_SENSOR_ID);
 
 //DS3231
-MyDS3231 rtc;
+MyDS3231 rtc(DS3231_SENSOR_ID, DATETIME_FORMAT);
 
 //TFT
 MyTFT myTFT; 

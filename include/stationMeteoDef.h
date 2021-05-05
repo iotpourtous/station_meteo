@@ -1,9 +1,6 @@
 #ifndef stationMeteoDef_h
 #define stationMeteoDef_h
 
-//Nombre de caractères pour les commandes
-#define MAX_COMMAND_SIZE 10
-
 //Commons
 #define SERIAL_BAUD 115200
 #define DEBUG 0
@@ -20,6 +17,9 @@
 //BMP280
 #define BMP280_ADDR 0x76
 
+//DS3231
+#define DATETIME_FORMAT "DD/MM/YYYY hh:mm:ss"
+
 //ILI9341_DRIVER
 #define ILI9341_DRIVER
 #define TFT_MISO 19
@@ -29,7 +29,8 @@
 #define TFT_DC    2  // Data Command control pin
 #define TFT_RST   4  // Reset pin (could connect to RST pin)
 
-//DS3231
-//rien
+
+//Bluetooth
+#define BT_ACCESS_POINT "station_meteo"
 
 #endif

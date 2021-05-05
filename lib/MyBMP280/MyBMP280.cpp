@@ -1,90 +1,76 @@
 #include "MyBMP280.h"
 
 MyBMP280::MyBMP280(
-    uint8_t addr, float pressureOffset) : Adafruit_BMP280(&Wire),
-                                          _addr(addr),
-                                          _pressureOffset(pressureOffset) {}
-
-bool MyBMP280::begin()
+    int addr,
+    int sensorId) : Adafruit_BMP280(&Wire),
+                    _addr(addr),
+                    _sensorId(sensorId),
+                    _pressureOffset(0)
 {
-  return Adafruit_BMP280::begin(_addr);
+  Adafruit_BMP280::getPressureSensor()->getSensor(&_pressureSensor);
 }
 
-float MyBMP280::_pressureFromEvent()
+void MyBMP280::begin()
 {
-  sensors_event_t event;
-  Adafruit_BMP280::getPressureSensor()->getEvent(&event);
-  return event.pressure;
+  if (!Adafruit_BMP280::begin(_addr))
+  {
+    Serial.println("Le capteur BMP280 est introuvable. Vérifier votre câblage");
+    while (1)
+      yield();
+  }
 }
 
 int MyBMP280::pressure()
 {
-  return (int)round(_pressureFromEvent() + _pressureOffset);
+  sensors_event_t event;
+  Adafruit_BMP280::getPressureSensor()->getEvent(&event);;
+
+  return (int)(event.pressure + _pressureOffset);
 }
 
-boolean MyBMP280::isNotIntValue(String data)
+String MyBMP280::executeCommand(String command)
 {
-  return data.toInt() == 0 && data.charAt(0) != '0';
-}
 
-String MyBMP280::writeCommand(String command)
-{
-  if (command.startsWith("O"))
-  {
-
-    String data = command.substring(1);
-    if (isNotIntValue(data))
-    {
-      return "Commande incorrecte";
-    }
-    pressureOffset(data.toInt());
-    return "OK";
-  }
-  return "Commande inexistante";
-}
-
-String MyBMP280::readCommand(String command, int8_t sensorId)
-{
-  if (command.equals(LIST_COMMAND))
+  if (command.equals(READ_INFORMATIONS_COMMAND))
   {
     String retour = "------------------------------------\n";
-    retour += "Liste des commandes\n";
-    retour += "'>" + String(sensorId) + "C' : Liste des commandes\n";
-    retour += "'>" + String(sensorId) + "P' : Lit la pression\n";
-    retour += "'>" + String(sensorId) + "O' : Lit l'offset de pression\n";
-    retour += "'>" + String(sensorId) + "I' : Lit les infos du capteur de pression\n";
-    retour += "'<" + String(sensorId) + "OXX.XX' : modifie l'offset de pression\n";
+    retour += "Pression : ";
+    retour += (isnan(pressure()))
+                  ? "lecture de la pression impossible"
+                  : (String)pressure() + "hPa ";
+    retour += "(offset :" + (String)pressureOffset() + ")\n";
     retour += "------------------------------------";
     return retour;
   }
-  else if (command.equals("P"))
+  else if (command.equals(READ_PRESSURE_SENSOR_INFORMATION_COMMAND))
   {
-    return (isnan(pressure()))
-               ? "P:lecture de la préssion impossible"
-               : "P:" + String((int)round(pressure())) + "hPa";
-  }
-  else if (command.equals("O"))
-  {
-    return "O:" + String(pressureOffset()) + "hPa";
-  }
-  else if (command.equals("I"))
-  {
-    sensor_t sensor;
-    Adafruit_BMP280::getPressureSensor()->getSensor(&sensor);
     String retour = "------------------------------------\n";
     retour + "capteur de pression Sensor\n";
-    retour += "Nom: " + String(sensor.name) + "\n";
-    retour += "Version:  " + String(sensor.version) + "\n";
-    retour += "Identifiant:   " + String(sensor.sensor_id) + "\n";
-    retour += "Delay minimun:   " + String(sensor.min_delay / 1000) + "Ms\n";
-    retour += "Valeur Max:   " + String(sensor.max_value) + "hPa\n";
-    retour += "Valeur Min:   " + String(sensor.min_value) + "hPa\n";
-    retour += "Resolution:  " + String(sensor.resolution) + "hPa\n";
+    retour += "Nom: " + (String)_pressureSensor.name + "\n";
+    retour += "Version:  " + (String)_pressureSensor.version + "\n";
+    retour += "Identifiant:   " + (String)_pressureSensor.sensor_id + "\n";
+    retour += "Delay minimun:   " + (String)(_pressureSensor.min_delay / 1000) + "Ms\n";
+    retour += "Valeur Max:   " + (String)_pressureSensor.max_value + "hPa\n";
+    retour += "Valeur Min:   " + (String)_pressureSensor.min_value + "hPa\n";
+    retour += "Resolution:  " + (String)_pressureSensor.resolution + "hPa\n";
     retour += "------------------------------------";
     return retour;
+  }
+  if (command.startsWith(PRESSURE_OFFSET_COMMAND))
+  {
+    float value = command.substring(PRESSURE_OFFSET_COMMAND.length()).toFloat();
+    if (value != 0 || (value == 0 && command.substring(2).startsWith("0")))
+      pressureOffset(value);
+    return executeCommand(READ_INFORMATIONS_COMMAND);
   }
   else
   {
-    return "Commande inexistante";
+    String retour = "------------------------------------\n";
+    retour += "Liste des commandes\n";
+    retour += (String)_sensorId + READ_INFORMATIONS_COMMAND + " : Affiche la pression\n";
+    retour += (String)_sensorId + READ_PRESSURE_SENSOR_INFORMATION_COMMAND + " : Affiche les infos du capteur de pression\n";
+    retour += (String)_sensorId + PRESSURE_OFFSET_COMMAND + "[XX.XX] : modifie l'offset de la pression si XX.XX est présent et affiche la pression\n";
+    retour += "------------------------------------";
+    return retour;
   }
 }

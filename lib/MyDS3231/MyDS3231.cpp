@@ -1,117 +1,88 @@
 #include "MyDS3231.h"
 
-char *MyDS3231::dayOfTheWeek()
+MyDS3231::MyDS3231(int sensorId, String formattedFormat) : _sensorId(sensorId),
+                                                           _formattedFormat(formattedFormat) {}
+
+void MyDS3231::begin()
+{
+  Serial.begin(115200);
+
+  if (!RTC_DS3231::begin())
+  {
+    Serial.println("Le RTF est introuvable. Vérifier votre câblage");
+  }
+
+  if (RTC_DS3231::lostPower())
+  {
+    Serial.println("RTC lost power, let's set the time!");
+    RTC_DS3231::adjust(DateTime(F(__DATE__), F(__TIME__)));
+  }
+}
+
+String MyDS3231::dayOfTheWeek()
 {
   return _daysOfTheWeek[now().dayOfTheWeek()];
 }
-void MyDS3231::year(uint16_t year)
-{
-  adjust(DateTime(year, now().month(), now().day(), now().hour(), now().minute(), now().second()));
-}
-void MyDS3231::month(uint16_t month)
-{
-  adjust(DateTime(now().year(), month, now().day(), now().hour(), now().minute(), now().second()));
-}
-void MyDS3231::day(uint16_t day)
-{
-  adjust(DateTime(now().year(), now().month(), day, now().hour(), now().minute(), now().second()));
-}
-void MyDS3231::hour(uint16_t hour)
-{
-  adjust(DateTime(now().year(), now().month(), now().day(), hour, now().minute(), now().second()));
-}
-void MyDS3231::minute(uint16_t minute)
-{
-  adjust(DateTime(now().year(), now().month(), now().day(), now().hour(), minute, now().second()));
-}
-void MyDS3231::second(uint16_t second)
-{
-  adjust(DateTime(now().year(), now().month(), now().day(), now().hour(), now().minute(), second));
-}
 
-boolean MyDS3231::isNotIntValue(String data)
+String MyDS3231::executeCommand(String command)
 {
-  return data.toInt() == 0 && data.charAt(0) != '0';
-}
 
-String MyDS3231::writeCommand(String command)
-{
-  if (command.startsWith("Y"))
-  {
-    String data = command.substring(1);
-    if (isNotIntValue(data))
-    {
-      return "Commande incorrecte";
-    }
-    year(data.toInt());
-    return "OK";
-  }
-  else if (command.startsWith("M"))
-  {
-    String data = command.substring(1);
-    if (isNotIntValue(data))
-    {
-      return "Commande incorrecte";
-    }
-    month(data.toInt());
-    return "OK";
-  } 
-  else if (command.startsWith("D"))
-  {
-    String data = command.substring(1);
-    if (isNotIntValue(data))
-    {
-      return "Commande incorrecte";
-    }
-    day(data.toInt());
-    return "OK";
-  }
-  else if (command.startsWith("H"))
-  {
-    String data = command.substring(1);
-    if (isNotIntValue(data))
-    {
-      return "Commande incorrecte";
-    }
-    hour(data.toInt());
-    return "OK";
-  }
-  else if (command.startsWith("m"))
-  {
-    String data = command.substring(1);
-    if (isNotIntValue(data))
-    {
-      return "Commande incorrecte";
-    }
-    minute(data.toInt());
-    return "OK";
-  }
-  return "Commande inexistante";
-}
-
-String MyDS3231::readCommand(String command, int8_t sensorId)
-{
-  if (command.equals("C"))
+  if (command.equals(READ_INFORMATIONS_COMMAND))
   {
     String retour = "------------------------------------\n";
-    retour += "Liste des commandes\n";
-    retour += "'>" + String(sensorId) + "C' : Liste des commandes\n";
-    retour += "'<" + String(sensorId) + "Y' : modifie l'année\n";
-    retour += "'<" + String(sensorId) + "M' : modifie le mois\n";
-    retour += "'<" + String(sensorId) + "D' : modifie le jour\n";
-    retour += "'<" + String(sensorId) + "H' : modifie l'heure\n";
-    retour += "'<" + String(sensorId) + "m' : modifie les minutes\n";
-    retour += "'>" + String(sensorId) + "T' : Lit la date et l'heure formatées\n";
-    retour += "------------------------------------\n";
+
+    char buf[50];
+    _formattedFormat.toCharArray(buf, 50);
+    retour += "Date : " + (String)dayOfTheWeek() + " " + now().toString(buf) + "\n";
+    retour += "------------------------------------";
     return retour;
   }
-  else if (command.equals("T"))
+  else if (command.startsWith(YEAR_COMMAND))
   {
-    char formattedFormat[25] = "DD/MM/YYYY hh:mm:ss";
-    return "T:" + String(now().toString(formattedFormat));
+    int value = command.substring(YEAR_COMMAND.length()).toInt();
+    if (value != 0 || (value == 0 && command.substring(YEAR_COMMAND.length()).startsWith("0")))
+      adjust(DateTime(value, now().month(), now().day(), now().hour(), now().minute(), now().second()));
+    return executeCommand(READ_INFORMATIONS_COMMAND);
+  }
+  else if (command.startsWith(MONTH_COMMAND))
+  {
+    int value = command.substring(MONTH_COMMAND.length()).toInt();
+    if (value != 0 || (value == 0 && command.substring(MONTH_COMMAND.length()).startsWith("0")))
+      adjust(DateTime(now().year(), value, now().day(), now().hour(), now().minute(), now().second()));
+    return executeCommand(READ_INFORMATIONS_COMMAND);
+  }
+  else if (command.startsWith(DAY_COMMAND))
+  {
+    int value = command.substring(DAY_COMMAND.length()).toInt();
+    if (value != 0 || (value == 0 && command.substring(DAY_COMMAND.length()).startsWith("0")))
+      adjust(DateTime(now().year(), now().month(), value, now().hour(), now().minute(), now().second()));
+    return executeCommand(READ_INFORMATIONS_COMMAND);
+  }
+  else if (command.startsWith(HOUR_COMMAND))
+  {
+    int value = command.substring(HOUR_COMMAND.length()).toInt();
+    if (value != 0 || (value == 0 && command.substring(HOUR_COMMAND.length()).startsWith("0")))
+      adjust(DateTime(now().year(), now().month(), now().day(), value, now().minute(), now().second()));
+    return executeCommand(READ_INFORMATIONS_COMMAND);
+  }
+  else if (command.startsWith(MINUTE_COMMAND))
+  {
+    int value = command.substring(MINUTE_COMMAND.length()).toInt();
+    if (value != 0 || (value == 0 && command.substring(MINUTE_COMMAND.length()).startsWith("0")))
+      adjust(DateTime(now().year(), now().month(), now().day(), now().hour(), value, now().second()));
+    return executeCommand(READ_INFORMATIONS_COMMAND);
   }
   else
   {
-    return "Commande inexistante";
+    String retour = "------------------------------------\n";
+    retour += "Liste des commandes\n";
+    retour += (String)_sensorId + READ_INFORMATIONS_COMMAND + " : Lit la date et l'heure formatées\n";
+    retour += (String)_sensorId + YEAR_COMMAND + "XXXX : modifie l'année\n";
+    retour += (String)_sensorId + MONTH_COMMAND + "XX : modifie le mois\n";
+    retour += (String)_sensorId + DAY_COMMAND + "XX : modifie le jour\n";
+    retour += (String)_sensorId + HOUR_COMMAND + "XX : modifie l'heure\n";
+    retour += (String)_sensorId + MINUTE_COMMAND + "XX : modifie les minutes\n";
+    retour += "------------------------------------\n";
+    return retour;
   }
 }

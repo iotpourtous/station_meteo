@@ -12,23 +12,25 @@ using namespace std;
 class MyBMP280 : public Adafruit_BMP280
 {
 private:
-    uint8_t _addr;
+    int _addr;
+    int _sensorId;
+
+    sensor_t _pressureSensor;
+
     float _pressureOffset;
-    float _pressureFromEvent();
 
-    String LIST_COMMAND = "C";
-
-    boolean isNotIntValue(String data);
+    String READ_INFORMATIONS_COMMAND = "i";
+    String READ_PRESSURE_SENSOR_INFORMATION_COMMAND = "ip";
+    String PRESSURE_OFFSET_COMMAND = "po";
 
 public:
-    MyBMP280(uint8_t addr, float pressureOffset = 0.0);
-    bool begin(void);
+    MyBMP280(int addr, int sensorId);
+    void begin(void);
     float pressureOffset() { return _pressureOffset; }
     void pressureOffset(float pressureOffset) { _pressureOffset = pressureOffset; }
     int pressure();
 
-    String readCommand(String command, int8_t sensorId);
-    String writeCommand(String command);
+    String executeCommand(String command);
 };
 
 extern MyBMP280 myBMP280;

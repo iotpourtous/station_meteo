@@ -11,20 +11,26 @@ using namespace std;
 class MyDS3231 : public RTC_DS3231
 {
 private:
-    char _daysOfTheWeek[7][12] = {"Dimanche", "Lundi", "Mardi", "Mercredi", "jeudi", "Vendredi", "Samedi"};
+    int _sensorId;
+    String _formattedFormat;
+
+    String READ_INFORMATIONS_COMMAND = "i";
+    String YEAR_COMMAND = "y";
+    String MONTH_COMMAND = "m";
+    String DAY_COMMAND = "d";
+    String HOUR_COMMAND = "h";
+    String MINUTE_COMMAND = "M";
+
+
+    String _daysOfTheWeek[7] = {"Dimanche", "Lundi", "Mardi", "Mercredi", "jeudi", "Vendredi", "Samedi"};
     boolean isNotIntValue(String data);
 
 public:
-    char *dayOfTheWeek();
-    void year(uint16_t year);
-    void month(uint16_t month);
-    void day(uint16_t day);
-    void hour(uint16_t hour);
-    void minute(uint16_t minute);
-    void second(uint16_t second);
+    MyDS3231(int sensorId, String formattedFormat);
+    void begin(void);
+    String dayOfTheWeek();
 
-    String readCommand(String command, int8_t sensorId);
-    String writeCommand(String command);
+    String executeCommand(String command);
 };
 
 extern MyDS3231 myDS3231;
