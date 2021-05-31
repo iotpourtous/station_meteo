@@ -34,29 +34,6 @@ MyTFT myTFT;
 
 //TOUCH
 MyTouch myTouch(MAX_COUNT, TOUCH_TRESHOLD, TOUCH_DELAY, TOUCH_PIN);
-int counter = 0;
-boolean currentTouch = LOW;
-
-boolean checkTouchKey(int touchPin, int threshold)
-{
-  unsigned long startTime;
-  int count;
-  boolean pressed;
-
-  pressed = false;
-  startTime = millis();
-  count = 0;
-  do
-  {
-    if (touchRead(touchPin) < threshold)
-      count++;
-    else
-      count = 0;
-    if (count == 3)
-      pressed = true;
-  } while ((count < 4) && (millis() < startTime + TOUCH_DELAY));
-  return pressed;
-}
 
 void initialisation()
 {

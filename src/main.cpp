@@ -7,12 +7,6 @@ void setup()
 {
 
   initialisation();
-
-  //Lecture des données
-  currentDate = rtc.now();
-  currentTemperature = dht.temperature();
-  currentHumidity = dht.humidity();
-  currentPressure = bmp.pressure();
 }
 
 void loop()
@@ -21,22 +15,11 @@ void loop()
   commandsFromSerial();
   commandsFromBT();
 
-  if (checkTouchKey(TOUCH_PIN, TOUCH_TRESHOLD))
-  {
-    if (currentTouch == LOW)
-    {
-      if (++counter > MAX_COUNT)
-        counter = 0;
-    }
-    currentTouch = HIGH;
-  }
-  else
-    currentTouch = LOW;
+  int counter = myTouch.manageCheck();
 
   manageDate();
 
   manageSensor();
-
   myTFT.affiche(
       currentDate,
       currentTemperature,

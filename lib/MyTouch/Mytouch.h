@@ -15,11 +15,15 @@ private:
     unsigned int _delay;
     unsigned int _pin;
 
+    boolean checkTouchKey(void);
+
 public:
     MyTouch(unsigned int max_count,
             unsigned int threshold,
             unsigned int delay,
             unsigned int pin);
+
+    int manageCheck();
 };
 
 extern MyTouch myTouch;
