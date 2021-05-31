@@ -10,44 +10,46 @@
 class MyTFT : public TFT_eSPI
 {
 private:
+    DateTime _currentDate = DateTime();
+    float _currentTemperature = 0;
+    float _currentHumidity = 0;
+    int _currentPressure = 0;
+    int _currentScreen = -1;
+
+    void afficheEcran0(
+        DateTime date,
+        float temperature,
+        float humidity,
+        int pressure);
+
+    void afficheEcran1(
+        DateTime date,
+        float temperature);
+
+    void afficheEcran2(
+        DateTime date,
+        float humidity);
+
+    void afficheEcran3(
+        DateTime date,
+        int pressure);
+
+    void afficheEcran4(
+        DateTime date,
+        String dayOfTheWeek);
+
 public:
-    void init();
+    void init(void);
 
-    void afficheHeure(DateTime heure, String dayOfTheWeek = "", boolean full = false);
-
-    void afficheTemperature(String temperature, boolean full = false);
-
-    void afficheHumidite(String humidite, boolean full = false);
-
-    void affichePression(String pressure, boolean full = false);
-
-    void afficheHeader(DateTime currentDate);
-
-    void afficheEcranAccueil(
-        DateTime currentDate,
-        float currentTemperature,
-        float currentHumidity,
-        int currentPressure);
+    void affiche(
+        DateTime date,
+        float temperature,
+        float humidity,
+        int pressure,
+        String dayOfTheWeek,
+        int screen);
 };
 
 extern MyTFT myTFT;
-/*
-void init();
 
-void afficheHeure(DateTime heure, String dayOfTheWeek = "", boolean full = false);
-
-void afficheTemperature(String temperature, boolean full = false);
-
-void afficheHumidite(String humidite, boolean full = false);
-
-void affichePression(String pressure, boolean full = false);
-
-void afficheHeader(DateTime currentDate);
-
-void afficheEcranAccueil(
-    DateTime currentDate,
-    float currentTemperature,
-    float currentHumidity,
-    int currentPressure);
-*/
 #endif
