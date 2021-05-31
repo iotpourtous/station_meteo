@@ -17,9 +17,9 @@ void MyTFT::affiche(
     DateTime date,
     float temperature,
     float humidity,
-    int pressure,
+    unsigned int pressure,
     String dayOfTheWeek,
-    int screen)
+    unsigned int screen)
 {
   if (_currentScreen != screen)
   {
@@ -34,11 +34,26 @@ void MyTFT::affiche(
     case 4:
       fillScreen(TFT_BLACK);
       break;
+    case 1:
+      fillRect(0, 0, 319, 31, TFT_RED);
+      drawRect(0, 0, 319, 240, TFT_RED);
+      fillRect(1, 32, 317, 207, TFT_BLACK);
+      break;
+    case 2:
+      fillRect(0, 0, 319, 31, TFT_BLUE);
+      drawRect(0, 0, 319, 240, TFT_BLUE);
+      fillRect(1, 32, 317, 207, TFT_BLACK);
+      break;
+    case 3:
+      fillRect(0, 0, 319, 31, TFT_GREEN);
+      drawRect(0, 0, 319, 240, TFT_GREEN);
+      fillRect(1, 32, 317, 207, TFT_BLACK);
+      break;
     case 0:
       fillRect(0, 0, 319, 31, TFT_WHITE);
-      drawRect(0, 31, 319, 209, TFT_WHITE);
+      drawRect(0, 0, 319, 240, TFT_WHITE);
     default:
-      fillRect(1, 32, 318, 208, TFT_BLACK);
+      fillRect(1, 32, 317, 207, TFT_BLACK);
       break;
     }
   }
@@ -59,7 +74,7 @@ void MyTFT::afficheEcran0(
     DateTime date,
     float temperature,
     float humidity,
-    int pressure)
+    unsigned int pressure)
 {
 
   if (_currentDate.minute() != date.minute())
@@ -102,7 +117,7 @@ void MyTFT::afficheEcran1(
   {
     _currentDate = date;
     char dateTimeFormat[] = "DD/MM/YYYY hh:mm";
-    setTextColor(TFT_BLACK, TFT_WHITE);
+    setTextColor(TFT_BLACK, TFT_RED);
     loadFont("Metal-Up-Your-Ear-24");
     drawCentreString(" " + String(_currentDate.toString(dateTimeFormat)) + " ", 160, 6, 1);
   }
@@ -124,7 +139,7 @@ void MyTFT::afficheEcran2(
   {
     _currentDate = date;
     char dateTimeFormat[] = "DD/MM/YYYY hh:mm";
-    setTextColor(TFT_BLACK, TFT_WHITE);
+    setTextColor(TFT_BLACK, TFT_BLUE);
     loadFont("Metal-Up-Your-Ear-24");
     drawCentreString(" " + String(_currentDate.toString(dateTimeFormat)) + " ", 160, 6, 1);
   }
@@ -140,14 +155,14 @@ void MyTFT::afficheEcran2(
 
 void MyTFT::afficheEcran3(
     DateTime date,
-    int pressure)
+    unsigned int pressure)
 {
 
   if (_currentDate.minute() != date.minute())
   {
     _currentDate = date;
     char dateTimeFormat[] = "DD/MM/YYYY hh:mm";
-    setTextColor(TFT_BLACK, TFT_WHITE);
+    setTextColor(TFT_BLACK, TFT_GREEN);
     loadFont("Metal-Up-Your-Ear-24");
     drawCentreString(" " + String(_currentDate.toString(dateTimeFormat)) + " ", 160, 6, 1);
   }

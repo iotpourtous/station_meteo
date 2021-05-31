@@ -23,7 +23,7 @@ public:
             unsigned int delay,
             unsigned int pin);
 
-    int manageCheck();
+    int touchCount(void);
 };
 
 extern MyTouch myTouch;

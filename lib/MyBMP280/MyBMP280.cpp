@@ -1,16 +1,16 @@
 #include "MyBMP280.h"
 
 MyBMP280::MyBMP280(
-    int addr,
-    int sensorId) : Adafruit_BMP280(&Wire),
-                    _addr(addr),
-                    _sensorId(sensorId),
-                    _pressureOffset(0)
+    unsigned int addr,
+    unsigned int sensorId) : Adafruit_BMP280(&Wire),
+                             _addr(addr),
+                             _sensorId(sensorId),
+                             _pressureOffset(0)
 {
   Adafruit_BMP280::getPressureSensor()->getSensor(&_pressureSensor);
 }
 
-void MyBMP280::begin()
+void MyBMP280::begin(void)
 {
   if (!Adafruit_BMP280::begin(_addr))
   {
@@ -20,10 +20,10 @@ void MyBMP280::begin()
   }
 }
 
-int MyBMP280::pressure()
+unsigned int MyBMP280::pressure(void)
 {
   sensors_event_t event;
-  Adafruit_BMP280::getPressureSensor()->getEvent(&event);;
+  Adafruit_BMP280::getPressureSensor()->getEvent(&event);
 
   return (int)(event.pressure + _pressureOffset);
 }

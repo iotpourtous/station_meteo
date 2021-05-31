@@ -5,8 +5,7 @@
 
 void setup()
 {
-
-  initialisation();
+  init();
 }
 
 void loop()
@@ -15,11 +14,12 @@ void loop()
   commandsFromSerial();
   commandsFromBT();
 
-  int counter = myTouch.manageCheck();
+  int counter = myTouch.touchCount();
 
-  manageDate();
+  readDate();
 
-  manageSensor();
+  ReadDataFromSensor();
+
   myTFT.affiche(
       currentDate,
       currentTemperature,

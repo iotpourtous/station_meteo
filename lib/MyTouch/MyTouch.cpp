@@ -10,13 +10,10 @@ MyTouch::MyTouch(unsigned int max_count,
 
 boolean MyTouch::checkTouchKey(void)
 {
-    unsigned long startTime;
-    int count;
-    boolean pressed;
-
-    pressed = false;
-    startTime = millis();
-    count = 0;
+    unsigned long startTime = millis();
+    int count = 0 ;
+    boolean pressed = false;
+    
     do
     {
         if (touchRead(_pin) < _threshold)
@@ -29,7 +26,7 @@ boolean MyTouch::checkTouchKey(void)
     return pressed;
 };
 
-int MyTouch::manageCheck(void)
+int MyTouch::touchCount(void)
 {
     if (checkTouchKey())
     {

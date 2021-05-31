@@ -8,7 +8,7 @@
 class MyDHT : public DHT_Unified
 {
 private:
-  int _sensorId;
+  unsigned int _sensorId;
   sensor_t _temperatureSensor;
   sensor_t _humiditySensor;
 
@@ -23,9 +23,9 @@ private:
 
 public:
   MyDHT(
-      int pin,
-      int type,
-      int sensorId);
+      unsigned int pin,
+      unsigned int type,
+      unsigned int sensorId);
 
   float temperatureOffset() { return _temperatureOffset; }
   void temperatureOffset(float temperatureOffset) { _temperatureOffset = temperatureOffset; }
@@ -35,7 +35,7 @@ public:
   virtual float temperature(void);
   virtual float humidity(void);
 
-  int delay();
+  unsigned int delay();
 
   String executeCommand(String command);
 };

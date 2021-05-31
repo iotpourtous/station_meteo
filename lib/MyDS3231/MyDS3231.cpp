@@ -1,7 +1,7 @@
 #include "MyDS3231.h"
 
-MyDS3231::MyDS3231(int sensorId, String formattedFormat) : _sensorId(sensorId),
-                                                           _formattedFormat(formattedFormat) {}
+MyDS3231::MyDS3231(unsigned int sensorId, String formattedFormat) : _sensorId(sensorId),
+                                                                    _formattedFormat(formattedFormat) {}
 
 void MyDS3231::begin()
 {

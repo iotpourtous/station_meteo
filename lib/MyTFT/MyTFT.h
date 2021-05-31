@@ -13,14 +13,14 @@ private:
     DateTime _currentDate = DateTime();
     float _currentTemperature = 0;
     float _currentHumidity = 0;
-    int _currentPressure = 0;
-    int _currentScreen = -1;
+    unsigned int _currentPressure = 0;
+    unsigned int _currentScreen = 10;
 
     void afficheEcran0(
         DateTime date,
         float temperature,
         float humidity,
-        int pressure);
+        unsigned int pressure);
 
     void afficheEcran1(
         DateTime date,
@@ -32,7 +32,7 @@ private:
 
     void afficheEcran3(
         DateTime date,
-        int pressure);
+        unsigned int pressure);
 
     void afficheEcran4(
         DateTime date,
@@ -45,9 +45,9 @@ public:
         DateTime date,
         float temperature,
         float humidity,
-        int pressure,
+        unsigned int pressure,
         String dayOfTheWeek,
-        int screen);
+        unsigned int screen);
 };
 
 extern MyTFT myTFT;

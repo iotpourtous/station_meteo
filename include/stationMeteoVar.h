@@ -26,8 +26,8 @@ MyDS3231 rtc(DS3231_SENSOR_ID, DATETIME_FORMAT);
 DateTime currentDate;
 
 //Gestion des delays
-long tempsDate = millis();
-long tempsSensor = millis();
+long tempsDate;
+long tempsSensor;
 
 //TFT
 MyTFT myTFT;
@@ -35,9 +35,13 @@ MyTFT myTFT;
 //TOUCH
 MyTouch myTouch(MAX_COUNT, TOUCH_TRESHOLD, TOUCH_DELAY, TOUCH_PIN);
 
-void initialisation()
+void yoyo()
 {
-
+  Serial.println("yoyo");
+}
+void init(void)
+{
+  //xTaskCreate
   //Initialisation du Serial
   Serial.begin(SERIAL_BAUD);
 
@@ -54,7 +58,6 @@ void initialisation()
   Serial.println("Initialisation bluetooth OK");
   Serial.println("------------------------");
 
-  delay(125);
   //Initialisation du DHT22
   Serial.println("Début Initialisation DHT22");
   delay(125);
@@ -85,9 +88,18 @@ void initialisation()
 
   Serial.println("Fin initialisation");
   Serial.println("------------------------");
+
+  tempsDate = millis();
+  tempsSensor = millis();
+
+  //Lecture des données
+  currentDate = rtc.now();
+  currentTemperature = dht.temperature();
+  currentHumidity = dht.humidity();
+  currentPressure = bmp.pressure();
 }
 
-void manageDate()
+void readDate(void)
 {
   if ((millis() - tempsDate) > DELAY_DATE)
   {
@@ -99,7 +111,7 @@ void manageDate()
   }
 }
 
-void manageSensor()
+void ReadDataFromSensor(void)
 {
   if ((millis() - tempsSensor) > DELAY_SENSOR)
   {

@@ -11,7 +11,7 @@ using namespace std;
 class MyDS3231 : public RTC_DS3231
 {
 private:
-    int _sensorId;
+    unsigned int _sensorId;
     String _formattedFormat;
 
     String READ_INFORMATIONS_COMMAND = "i";
@@ -21,12 +21,11 @@ private:
     String HOUR_COMMAND = "h";
     String MINUTE_COMMAND = "M";
 
-
     String _daysOfTheWeek[7] = {"Dimanche", "Lundi", "Mardi", "Mercredi", "jeudi", "Vendredi", "Samedi"};
     boolean isNotIntValue(String data);
 
 public:
-    MyDS3231(int sensorId, String formattedFormat);
+    MyDS3231(unsigned int sensorId, String formattedFormat);
     void begin(void);
     String dayOfTheWeek();
 

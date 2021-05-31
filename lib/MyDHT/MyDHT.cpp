@@ -1,12 +1,12 @@
 #include "MyDHT.h"
 
 MyDHT::MyDHT(
-    int pin,
-    int type,
-    int sensorId) : DHT_Unified(pin, type),
-                    _sensorId(sensorId),
-                    _temperatureOffset(0),
-                    _humidityOffset(0)
+    unsigned int pin,
+    unsigned int type,
+    unsigned int sensorId) : DHT_Unified(pin, type),
+                             _sensorId(sensorId),
+                             _temperatureOffset(0),
+                             _humidityOffset(0)
 {
     DHT_Unified::temperature().getSensor(&_temperatureSensor);
     DHT_Unified::humidity().getSensor(&_humiditySensor);
@@ -26,7 +26,7 @@ float MyDHT::humidity(void)
     return event.relative_humidity + _humidityOffset;
 }
 
-int MyDHT::delay()
+unsigned int MyDHT::delay()
 {
     return _temperatureSensor.min_delay / 1000;
 }

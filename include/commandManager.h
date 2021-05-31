@@ -20,7 +20,7 @@ String commands(String command)
   return "Commande inexistante";
 }
 
-void commandsFromSerial()
+void commandsFromSerial(void)
 {
   if (Serial.available())
   {
@@ -29,7 +29,7 @@ void commandsFromSerial()
   }
 }
 
-void commandsFromBT()
+void commandsFromBT(void)
 {
   if (SerialBT.available() > 0)
   {

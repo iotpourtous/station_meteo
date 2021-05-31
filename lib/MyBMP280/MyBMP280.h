@@ -12,8 +12,8 @@ using namespace std;
 class MyBMP280 : public Adafruit_BMP280
 {
 private:
-    int _addr;
-    int _sensorId;
+    unsigned int _addr;
+    unsigned int _sensorId;
 
     sensor_t _pressureSensor;
 
@@ -24,11 +24,11 @@ private:
     String PRESSURE_OFFSET_COMMAND = "po";
 
 public:
-    MyBMP280(int addr, int sensorId);
+    MyBMP280(unsigned int addr, unsigned int sensorId);
     void begin(void);
-    float pressureOffset() { return _pressureOffset; }
+    float pressureOffset(void) { return _pressureOffset; }
     void pressureOffset(float pressureOffset) { _pressureOffset = pressureOffset; }
-    int pressure();
+    unsigned int pressure(void);
 
     String executeCommand(String command);
 };
