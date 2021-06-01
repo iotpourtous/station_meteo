@@ -5,7 +5,7 @@
 
 void setup()
 {
-  init();
+  initialize();
 }
 
 void loop()
@@ -18,7 +18,7 @@ void loop()
 
   readDate();
 
-  ReadDataFromSensor();
+  readData();
 
   myTFT.affiche(
       currentDate,

@@ -10,6 +10,15 @@
 class MyTFT : public TFT_eSPI
 {
 private:
+    typedef enum
+    {
+        DARKGREY_SCREEN = (TFT_DARKGREY),
+        TEMPERATURE_SCREEN = (TFT_PURPLE),
+        HUMIDITY_SCREEN = (TFT_BLUE),
+        PRESSURE_SCREEN = (TFT_GREEN),
+        DATETIME_SCREEN = (TFT_YELLOW)
+    } color_type_t;
+
     DateTime _currentDate = DateTime();
     float _currentTemperature = 0;
     float _currentHumidity = 0;
@@ -37,6 +46,9 @@ private:
     void afficheEcran4(
         DateTime date,
         String dayOfTheWeek);
+
+    void drawBackGround(unsigned int color);
+    void afficheHeure(DateTime date, unsigned int backgroundColor);
 
 public:
     void init(void);

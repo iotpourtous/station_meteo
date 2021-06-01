@@ -35,59 +35,52 @@ MyTFT myTFT;
 //TOUCH
 MyTouch myTouch(MAX_COUNT, TOUCH_TRESHOLD, TOUCH_DELAY, TOUCH_PIN);
 
-void yoyo()
+void initialize(void)
 {
-  Serial.println("yoyo");
-}
-void init(void)
-{
-  //xTaskCreate
   //Initialisation du Serial
   Serial.begin(SERIAL_BAUD);
 
+  Serial.println("------------------------------------------------");
   Serial.println("Début initialisation");
-
-  Serial.println("------------------------");
-  Serial.println("Début initialisation");
-  Serial.println("------------------------");
+  Serial.println("------------------------------------------------");
 
   //Initialisation du bluetooth
   Serial.println("Début Initialisation bluetooth");
   delay(125);
   SerialBT.begin(BT_ACCESS_POINT);
   Serial.println("Initialisation bluetooth OK");
-  Serial.println("------------------------");
+  Serial.println("------------------------------------------------");
 
   //Initialisation du DHT22
   Serial.println("Début Initialisation DHT22");
   delay(125);
   dht.begin();
   Serial.println("Initialisation DHT22 OK");
-  Serial.println("------------------------");
+  Serial.println("------------------------------------------------");
 
   //Initialisation du BPM280
   Serial.println("Début Initialisation BPM280");
   delay(125);
   bmp.begin();
   Serial.println("Initialisation BPM280 OK");
-  Serial.println("------------------------");
+  Serial.println("------------------------------------------------");
 
   //Initialisation du DS3231
   Serial.println("Début Initialisation DS3231");
   delay(125);
   rtc.begin();
   Serial.println("Initialisation DS3231 OK");
-  Serial.println("------------------------");
+  Serial.println("------------------------------------------------");
 
   //Initialisation du ILI9341
   Serial.println("Début Initialisation ILI9341");
   delay(125);
   myTFT.init();
   Serial.println("Initialisation ILI9341 OK");
-  Serial.println("------------------------");
+  Serial.println("------------------------------------------------");
 
   Serial.println("Fin initialisation");
-  Serial.println("------------------------");
+  Serial.println("------------------------------------------------");
 
   tempsDate = millis();
   tempsSensor = millis();
@@ -111,7 +104,7 @@ void readDate(void)
   }
 }
 
-void ReadDataFromSensor(void)
+void readData(void)
 {
   if ((millis() - tempsSensor) > DELAY_SENSOR)
   {
