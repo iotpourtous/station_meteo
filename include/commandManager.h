@@ -17,7 +17,13 @@ String commands(String command)
   {
     return rtc.executeCommand(command.substring(1));
   }
-  return "Commande inexistante";
+
+  String retour = "------------------------------------\n";
+  retour += (String)DHT22_SENSOR_ID + " : capteur température\n";
+  retour += (String)BMP280_SENSOR_ID + " : capteur humidité\n";
+  retour += (String)DS3231_SENSOR_ID + " : capteur pression\n";
+  retour += "------------------------------------";
+  return retour;
 }
 
 void commandsFromSerial(void)
@@ -36,6 +42,12 @@ void commandsFromBT(void)
     String command = SerialBT.readStringUntil('\n');
     SerialBT.println(commands(command));
   }
+}
+
+void commandManager()
+{
+  commandsFromSerial();
+  commandsFromBT();
 }
 
 #endif

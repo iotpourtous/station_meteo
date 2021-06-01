@@ -2,6 +2,7 @@
 
 #include "stationMeteoVar.h"
 #include "commandManager.h"
+#include "utils.h"
 
 void setup()
 {
@@ -10,13 +11,9 @@ void setup()
 
 void loop()
 {
-
-  commandsFromSerial();
-  commandsFromBT();
+  commandManager();
 
   int counter = myTouch.touchCount();
-
-  readDate();
 
   readData();
 
