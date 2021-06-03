@@ -17,7 +17,7 @@ void loop()
 
   readData();
 
-  myTFT.affiche(
+  myTFT.display(
       currentDate,
       currentTemperature,
       currentHumidity,

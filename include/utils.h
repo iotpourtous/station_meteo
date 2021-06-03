@@ -12,6 +12,18 @@ void initialize(void)
     Serial.println("Début initialisation");
     Serial.println("------------------------------------------------");
 
+    //Initialisation de SPIFFS
+    Serial.println("Début Initialisation SPIFFS");
+    delay(125);
+    if (!SPIFFS.begin())
+    {
+        Serial.println("SPIFFS initialisation failed!");
+        while (1)
+            yield();
+    }
+    Serial.println("Initialisation SPIFFS OK");
+    Serial.println("------------------------------------------------");
+
     //Initialisation du bluetooth
     Serial.println("Début Initialisation bluetooth");
     delay(125);

@@ -2,18 +2,11 @@
 
 void MyTFT::init()
 {
-  if (!SPIFFS.begin())
-  {
-    Serial.println("SPIFFS initialisation failed!");
-    while (1)
-      yield();
-  }
-
   TFT_eSPI::init();
   setRotation(1);
 }
 
-void MyTFT::affiche(
+void MyTFT::display(
     DateTime date,
     float temperature,
     float humidity,
@@ -21,153 +14,164 @@ void MyTFT::affiche(
     String dayOfTheWeek,
     unsigned int screen)
 {
+
+  boolean refreshDisplay = false;
+
   if (_currentScreen != screen)
   {
     _currentScreen = screen;
-    _currentDate = DateTime();
-    _currentTemperature = 0;
-    _currentHumidity = 0;
-    _currentPressure = 0;
-
-    switch (_currentScreen)
-    {
-    case 0:
-      drawBackGround(color_type_t::DARKGREY_SCREEN);
-      break;
-    case 1:
-      drawBackGround(color_type_t::TEMPERATURE_SCREEN);
-      break;
-    case 2:
-      drawBackGround(color_type_t::HUMIDITY_SCREEN);
-      break;
-    case 3:
-      drawBackGround(color_type_t::PRESSURE_SCREEN);
-      break;
-    case 4:
-      fillScreen(TFT_BLACK);
-      break;
-    }
+    refreshDisplay = true;
   }
 
-  if (_currentScreen == 0)
-    afficheEcran0(date, temperature, humidity, pressure);
-  else if (_currentScreen == 1)
-    afficheEcran1(date, temperature);
-  else if (_currentScreen == 2)
-    afficheEcran2(date, humidity);
-  else if (_currentScreen == 3)
-    afficheEcran3(date, pressure);
-  else if (_currentScreen == 4)
-    afficheEcran4(date, dayOfTheWeek);
+  switch (_currentScreen)
+  {
+  case 0:
+    displayMainScreen(date, temperature, humidity, pressure, refreshDisplay);
+    break;
+  case 1:
+    displayTemperatureScreen(date, temperature, refreshDisplay);
+    break;
+  case 2:
+    displayHumidityScreen(date, humidity, refreshDisplay);
+    break;
+  case 3:
+    displayPressureScreen(date, pressure, refreshDisplay);
+    break;
+  case 4:
+    displayDateTimeScreen(date, dayOfTheWeek, refreshDisplay);
+    break;
+  }
 }
 
-void MyTFT::drawBackGround(unsigned int color)
-{
-  fillRect(0, 0, 319, 31, color);
-  drawRect(0, 0, 319, 240, color);
-  fillRect(1, 32, 317, 207, TFT_BLACK);
-}
-
-void MyTFT::afficheEcran0(
+void MyTFT::displayMainScreen(
     DateTime date,
     float temperature,
     float humidity,
-    unsigned int pressure)
+    unsigned int pressure,
+    boolean refreshDisplay)
 {
-  afficheHeure(date, color_type_t::DARKGREY_SCREEN);
-  if (_currentTemperature != temperature)
+  displayBackGround(MAIN_SCREEN, refreshDisplay);
+  displayDateTime(date, MAIN_SCREEN, refreshDisplay);
+
+  if (_currentTemperature != temperature || refreshDisplay)
   {
     _currentTemperature = temperature;
-    setTextColor(color_type_t::TEMPERATURE_SCREEN, TFT_BLACK);
-    loadFont("Metal-Up-Your-Ear-48");
+    setTextColor(TEMPERATURE_SCREEN, TFT_BLACK);
+    loadFont(FONT_48);
     drawCentreString(" " + (String)_currentTemperature + "C ", 100, 60, 1);
   }
-  if (_currentHumidity != humidity)
+
+  if (_currentHumidity != humidity || refreshDisplay)
   {
     _currentHumidity = humidity;
-    setTextColor(color_type_t::HUMIDITY_SCREEN, TFT_BLACK);
-    loadFont("Metal-Up-Your-Ear-48");
+    setTextColor(HUMIDITY_SCREEN, TFT_BLACK);
+    loadFont(FONT_48);
     drawCentreString(" " + (String)_currentHumidity + "% ", 160, 120, 1);
   }
-  if (_currentPressure != pressure)
+
+  if (_currentPressure != pressure || refreshDisplay)
   {
     _currentPressure = pressure;
-    setTextColor(color_type_t::PRESSURE_SCREEN, TFT_BLACK);
-    loadFont("Metal-Up-Your-Ear-48");
+    setTextColor(PRESSURE_SCREEN, TFT_BLACK);
+    loadFont(FONT_48);
     drawCentreString(" " + (String)_currentPressure + "hPa ", 220, 180, 1);
   }
 }
 
-void MyTFT::afficheEcran1(
+void MyTFT::displayTemperatureScreen(
     DateTime date,
-    float temperature)
+    float temperature,
+    boolean refreshDisplay)
 {
-  afficheHeure(date, color_type_t::TEMPERATURE_SCREEN);
-  if (_currentTemperature != temperature)
+  displayBackGround(TEMPERATURE_SCREEN, refreshDisplay);
+  displayDateTime(date, TEMPERATURE_SCREEN, refreshDisplay);
+
+  if (_currentTemperature != temperature || refreshDisplay)
   {
     _currentTemperature = temperature;
-    setTextColor(color_type_t::TEMPERATURE_SCREEN, TFT_BLACK);
-    loadFont("Metal-Up-Your-Ear-60");
-    drawCentreString(" " + (String)_currentTemperature + "C ", 160, 120, 1);
+    displayData(TEMPERATURE_SCREEN, " " + (String)_currentTemperature + "C ");
   }
 }
 
-void MyTFT::afficheEcran2(
+void MyTFT::displayHumidityScreen(
     DateTime date,
-    float humidity)
+    float humidity,
+    boolean refreshDisplay)
 {
-  afficheHeure(date, color_type_t::HUMIDITY_SCREEN);
-  if (_currentHumidity != humidity)
+  displayBackGround(HUMIDITY_SCREEN, refreshDisplay);
+  displayDateTime(date, HUMIDITY_SCREEN, refreshDisplay);
+
+  if (_currentHumidity != humidity || refreshDisplay)
   {
     _currentHumidity = humidity;
-    setTextColor(color_type_t::HUMIDITY_SCREEN, TFT_BLACK);
-    loadFont("Metal-Up-Your-Ear-60");
-    drawCentreString(" " + (String)_currentHumidity + "% ", 160, 120, 1);
+    displayData(HUMIDITY_SCREEN, " " + (String)_currentHumidity + "% ");
   }
 }
 
-void MyTFT::afficheEcran3(
+void MyTFT::displayPressureScreen(
     DateTime date,
-    unsigned int pressure)
+    unsigned int pressure,
+    boolean refreshDisplay)
 {
-  afficheHeure(date, color_type_t::PRESSURE_SCREEN);
-  if (_currentPressure != pressure)
+  displayBackGround(PRESSURE_SCREEN, refreshDisplay);
+  displayDateTime(date, PRESSURE_SCREEN, refreshDisplay);
+
+  if (_currentPressure != pressure || refreshDisplay)
   {
     _currentPressure = pressure;
-    setTextColor(color_type_t::PRESSURE_SCREEN, TFT_BLACK);
-    loadFont("Metal-Up-Your-Ear-60");
-    drawCentreString(" " + (String)_currentPressure + "hPa ", 160, 120, 1);
+    displayData(PRESSURE_SCREEN, " " + (String)_currentPressure + "hPa ");
   }
 }
 
-void MyTFT::afficheEcran4(
+void MyTFT::displayDateTimeScreen(
     DateTime date,
-    String dayOfTheWeek)
+    String dayOfTheWeek,
+    boolean refreshDisplay)
 {
+  if (refreshDisplay)
+    fillScreen(TFT_BLACK);
 
-  if (_currentDate.minute() != date.minute())
+  if (_currentDate.minute() != date.minute() || refreshDisplay)
   {
     _currentDate = date;
     char dateFormat[] = "DD/MM/YYYY";
     char timeFormat[] = "hh:mm";
-    setTextColor(color_type_t::DATETIME_SCREEN, TFT_BLACK);
-    loadFont("Metal-Up-Your-Ear-60");
+    setTextColor(DATETIME_SCREEN, TFT_BLACK);
+    loadFont(FONT_60);
     drawCentreString(" " + String(_currentDate.toString(timeFormat)) + " ", 160, 80, 1);
-    loadFont("Metal-Up-Your-Ear-36");
+    loadFont(FONT_36);
     drawCentreString(" " + dayOfTheWeek + " " + (_currentDate.toString(dateFormat)), 160, 140, 1);
   }
 }
 
-void MyTFT::afficheHeure(
-    DateTime date,
-    unsigned int backgroundColor)
+void MyTFT::displayBackGround(unsigned int color, boolean refreshDisplay)
 {
-  if (_currentDate.minute() != date.minute())
+  if (refreshDisplay)
+  {
+    fillRect(0, 0, 319, 31, color);
+    drawRect(0, 0, 319, 240, color);
+    fillRect(1, 32, 317, 207, TFT_BLACK);
+  }
+}
+
+void MyTFT::displayData(unsigned int color, String testToDisplay)
+{
+  setTextColor(color, TFT_BLACK);
+  loadFont(FONT_60);
+  drawCentreString(testToDisplay, 160, 120, 1);
+}
+
+void MyTFT::displayDateTime(
+    DateTime date,
+    unsigned int backgroundColor,
+    boolean refreshDisplay)
+{
+  if (_currentDate.minute() != date.minute() || refreshDisplay)
   {
     _currentDate = date;
     char dateTimeFormat[] = "DD/MM/YYYY hh:mm";
     setTextColor(TFT_BLACK, backgroundColor);
-    loadFont("Metal-Up-Your-Ear-24");
+    loadFont(FONT_24);
     drawCentreString(" " + String(_currentDate.toString(dateTimeFormat)) + " ", 160, 6, 1);
   }
 }

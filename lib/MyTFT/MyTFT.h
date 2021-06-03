@@ -4,20 +4,21 @@
 #include <Arduino.h>
 
 #include "TFT_eSPI.h"
-#include "SPI.h"
 #include <RTClib.h>
 
 class MyTFT : public TFT_eSPI
 {
 private:
-    typedef enum
-    {
-        DARKGREY_SCREEN = (TFT_DARKGREY),
-        TEMPERATURE_SCREEN = (TFT_PURPLE),
-        HUMIDITY_SCREEN = (TFT_BLUE),
-        PRESSURE_SCREEN = (TFT_GREEN),
-        DATETIME_SCREEN = (TFT_YELLOW)
-    } color_type_t;
+    unsigned int MAIN_SCREEN = TFT_DARKGREY;
+    unsigned int TEMPERATURE_SCREEN = TFT_PURPLE;
+    unsigned int HUMIDITY_SCREEN = TFT_BLUE;
+    unsigned int PRESSURE_SCREEN = TFT_GREEN;
+    unsigned int DATETIME_SCREEN = TFT_YELLOW;
+
+    String FONT_24 = "Metal-Up-Your-Ear-24";
+    String FONT_36 = "Metal-Up-Your-Ear-36";
+    String FONT_48 = "Metal-Up-Your-Ear-48";
+    String FONT_60 = "Metal-Up-Your-Ear-60";
 
     DateTime _currentDate = DateTime();
     float _currentTemperature = 0;
@@ -25,35 +26,41 @@ private:
     unsigned int _currentPressure = 0;
     unsigned int _currentScreen = 10;
 
-    void afficheEcran0(
+    void displayMainScreen(
         DateTime date,
         float temperature,
         float humidity,
-        unsigned int pressure);
+        unsigned int pressure,
+        boolean refreshDisplay);
 
-    void afficheEcran1(
+    void displayTemperatureScreen(
         DateTime date,
-        float temperature);
+        float temperature,
+        boolean refreshDisplay);
 
-    void afficheEcran2(
+    void displayHumidityScreen(
         DateTime date,
-        float humidity);
+        float humidity,
+        boolean refreshDisplay);
 
-    void afficheEcran3(
+    void displayPressureScreen(
         DateTime date,
-        unsigned int pressure);
+        unsigned int pressure,
+        boolean refreshDisplay);
 
-    void afficheEcran4(
+    void displayDateTimeScreen(
         DateTime date,
-        String dayOfTheWeek);
+        String dayOfTheWeek,
+        boolean refreshDisplay);
 
-    void drawBackGround(unsigned int color);
-    void afficheHeure(DateTime date, unsigned int backgroundColor);
+    void displayBackGround(unsigned int color, boolean refreshDisplay);
+    void displayDateTime(DateTime date, unsigned int backgroundColor, boolean refreshDisplay);
+    void displayData(unsigned int color, String testToDisplay);
 
 public:
     void init(void);
 
-    void affiche(
+    void display(
         DateTime date,
         float temperature,
         float humidity,
